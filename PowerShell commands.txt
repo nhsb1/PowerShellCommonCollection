@@ -53,4 +53,7 @@ Add-MailboxFolderPermission -Identity usernametoedit:\Calendar -User togiveacces
 For a group:
 Add-MailboxFolderPermission -Identity usernametoedit:\Calendar -User CalendarManagersGroup -AccessRights Author
 ---
+Find logged in user of remote computer
+$computer=read-host "computer name to check"
+gwmi win32_computersystem -comp $computer | select USername,Caption
 
