@@ -1,0 +1,56 @@
+
+Disable ActiveSync
+Get-CASMailbox <user> | Select ActiveSyncAllowedDeviceIDs, ActiveSyncBlockedDeviceIDs
+
+Get-ActiveSyncDeviceStatistics –Mailbox <user> | fl DeviceID
+
+Set-CASMailbox -Identity <user> -ActiveSyncBlockedDeviceIDs "<DeviceID_1>,<DeviceID_2>"
+
+--
+To erase a tape using DPM Management Shell:
+Start-TapeErase [-Tape] <Media[]> [[-JobStateChangeHandler] <JobStateChangedEventHandler> ] [-Verbose] [-Debug] [-ErrorAction <ActionPreference> ] [-ErrorVariable <String> ] [-OutVariable <String> ] [-OutBuffer <Int32> ] 
+
+Example:
+$DPMLib = Get-DPMLibrary -DPMServerName "MyServerName"
+$Tape = Get-Tape -DPMLibrary $DPMLib
+Start-TapeErase -Tape $Tape[2]
+--
+If a tape has been moved without DPM knowing, it fails to identify the tapes perperly.  To resolve, do a fast inventory followed by a detailed inventory - DPM will be in sync with the tape library.
+
+$DPMLib = Get-DPMLibrary -DPMServerName "MyServerName"
+Start-DPMLibraryInventory -DPMLibrary $DPMLib -FastInventory (This command performs a fast inventory of the library on the server)
+Start-DPMLibraryInventory -DPMLibrary $DPMLib -DetailedInventory(This command performs a detailed inventory of the library on server).
+
+---
+Command for getting the current tapes in the drive:
+
+$DPMLIB = Get-DPMLibrary -DPMServerName "MyServerName"
+Get-Tape -DPMLibrary $DPMLib[0] | FL
+
+Or for only the Tape Label
+Get-Tape -DPMLibrary $DPMLib[0] | FT -Property Label
+
+---
+Exchange/Office365 send/receive limits
+get-transportconfig | ft maxsendsize, maxreceivesize 
+get-receiveconnector | ft name, maxmessagesize 
+get-sendconnector | ft name, maxmessagesize 
+get-mailbox Administrator |ft Name, Maxsendsize, maxreceivesize
+
+---
+Exchange Message Tracking in Toolbox>Tracking Log Explorer
+
+get-MessageTrackingLog -Sender usera@externaldomain.com -Recipient anyone@localdomain.com -Start "01/30/2016 11:00:00" -End "2/31/2016 15:00:00"  
+
+---
+Grant user the ability to edit Outlook calendars of arbitrary users; user must be able to accept and manage apointments without having access to the email.
+
+Add-MailboxFolderPermission -Identity <MailboxFolderIdParameter> -AccessRights <MailboxFolderAccessRight[]> -User <MailboxFolderUserIdParameter>
+
+For a single user:
+Add-MailboxFolderPermission -Identity usernametoedit:\Calendar -User togiveaccess -AccessRights Author
+
+For a group:
+Add-MailboxFolderPermission -Identity usernametoedit:\Calendar -User CalendarManagersGroup -AccessRights Author
+---
+
